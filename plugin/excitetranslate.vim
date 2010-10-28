@@ -26,18 +26,18 @@ function! ExciteTranslate(word, ...)
   let chunk = chunk . 'wb_lp=' . mode
   let resfile = tempname()
   let tmpfile = tempname()
-  exec 'redir! > ' . tmpfile 
-  silent echo chunk
-  redir END
+  call writefile([chunk], tmpfile)
   " Do query with curl.
   call AL_echo('Translating...', 'WarningMsg')
-  let ret = system('curl -d @' . AL_quote(tmpfile) . ' -o ' . AL_quote(resfile) . ' ' . s:excite_web)
+  let ret = system('curl -L -d @' . AL_quote(tmpfile) . ' -o ' . AL_quote(resfile) . ' ' . s:excite_web)
   redraw!
   " Format result string.
   call AL_execute('1split ' . resfile)
+  silent! %s/</\r</g
   silent! %v/^<textarea /d _
   silent! %v/name="after"/d _
   silent! %s/<[^>]*>//g
+  silent! %s/\r//g
   let line = getline(1)
   silent bw!
   " Remove temporary files
@@ -91,4 +91,3 @@ function! ExciteTranslateRange() range
 endfunction
 
 command! -nargs=0 -range ExciteTranslate <line1>,<line2>call ExciteTranslateRange()
-
