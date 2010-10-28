@@ -65,7 +65,7 @@ function! ExciteTranslateRange() range
   " Put to buffer.
   if AL_hasflag(g:excitetranslate_options, 'buffer')
     " Open or go result buffer.
-    let bufname = '==Translate== Exicte'
+    let bufname = '==Translate== Excite'
     let winnr = bufwinnr(bufname)
     if winnr < 1
       call AL_execute('below new '.escape(bufname, ' ')) 
