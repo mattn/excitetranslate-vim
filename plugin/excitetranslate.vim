@@ -4,7 +4,7 @@
 "
 " Maintainer:	MURAOKA Taro <koron@tka.att.ne.jp>
 " Author:	Yasuhiro Matsumoto <mattn_jp@hotmail.com>
-" Last Change:	29-Oct-2010.
+" Last Change:	31-Oct-2010.
 
 if !exists('g:excitetranslate_options')
   let g:excitetranslate_options = ["register","buffer"]
@@ -45,9 +45,9 @@ function! ExciteTranslate(word, ...)
   let res = http#post(s:endpoint, {"before": a:word, "wb_lp": mode})
   let text = iconv(res.content, "utf-8", &encoding)
   let mx = '^.*<textarea name="after" id="after">'
-  let text = substitute(matchstr(text, mx), mx, '', '')
+  let text = substitute(text, mx, '', '')
   let mx = '</textarea>.*$'
-  let text = substitute(matchstr(text, mx), mx, '', '')
+  let text = substitute(text, mx, '', '')
   let text = substitute(text, '&gt;', '>', 'g')
   let text = substitute(text, '&lt;', '<', 'g')
   let text = substitute(text, '&quot;', '"', 'g')
@@ -64,7 +64,7 @@ function! ExciteTranslateRange() range
   let curline = a:firstline
   let strline = ''
   while curline <= a:lastline
-    let tmpline = AL_chompex(getline(curline))
+    let tmpline = substitute(getline(curline), '^\s\+\|\s\+$', '', 'g')
     if tmpline=~ '\m^\a' && strline =~ '\m\a$'
       let strline = strline .' '. tmpline
     else
@@ -75,12 +75,12 @@ function! ExciteTranslateRange() range
   " Do translate.
   let jstr = ExciteTranslate(strline)
   " Put to buffer.
-  if AL_hasflag(g:excitetranslate_options, 'buffer')
+  if index(g:excitetranslate_options, 'buffer') != -1
     " Open or go result buffer.
     let bufname = '==Translate== Excite'
     let winnr = bufwinnr(bufname)
     if winnr < 1
-      call AL_execute('below new '.escape(bufname, ' ')) 
+      execute 'below new '.escape(bufname, ' ')
     else
       if winnr != winnr()
 	execute winnr.'wincmd w'
@@ -97,7 +97,7 @@ function! ExciteTranslateRange() range
     normal! Gzt
   endif
   " Put to unnamed register.
-  if AL_hasflag(g:excitetranslate_options, 'register')
+  if index(g:excitetranslate_options, 'register') != -1
     let @" = jstr
   endif
 endfunction
