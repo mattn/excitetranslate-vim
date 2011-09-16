@@ -4,7 +4,7 @@
 "
 " Maintainer:	MURAOKA Taro <koron@tka.att.ne.jp>
 " Author:	Yasuhiro Matsumoto <mattn_jp@hotmail.com>
-" Last Change:	31-Oct-2010.
+" Last Change:	16-Sep-2011.
 
 if !exists('g:excitetranslate_options')
   let g:excitetranslate_options = ["register","buffer"]
@@ -44,7 +44,7 @@ function! ExciteTranslate(word, ...)
   let @a= mode
   let res = http#post(s:endpoint, {"before": a:word, "wb_lp": mode})
   let text = iconv(res.content, "utf-8", &encoding)
-  let mx = '^.*<textarea id="after" class="resizable" cols="37" rows="13" name="after">'
+  let mx = '^.*<textarea id="after"[^>]\+>'
   let text = substitute(text, mx, '', '')
   let mx = '</textarea>.*$'
   let text = substitute(text, mx, '', '')
