@@ -44,7 +44,7 @@ function! ExciteTranslate(word, ...)
   let @a= mode
   let res = http#post(s:endpoint, {"before": a:word, "wb_lp": mode})
   let text = iconv(res.content, "utf-8", &encoding)
-  let mx = '^.*<textarea name="after" id="after">'
+  let mx = '^.*<textarea id="after" class="resizable" cols="37" rows="13" name="after">'
   let text = substitute(text, mx, '', '')
   let mx = '</textarea>.*$'
   let text = substitute(text, mx, '', '')
