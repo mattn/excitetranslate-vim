@@ -24,7 +24,7 @@ function! ExciteTranslate(word, ...)
   let res = http#post(s:endpoint, {"before": a:word, "wb_lp": mode})
   let dom = html#parse(iconv(res.content, "utf-8", &encoding))
   let after = dom.find('textarea', {"id": "after"})
-  return substitute(after.value(), "\x08", '', '')
+  return substitute(after.value(), "\x08", "\n", 'g')
 endfunction
 
 function! ExciteTranslateRange() range
@@ -57,10 +57,10 @@ function! ExciteTranslateRange() range
     setlocal buftype=nofile bufhidden=hide noswapfile wrap ft=
     " Append translated string.
     if line('$') == 1 && getline('$').'X' ==# 'X'
-      call setline(1, jstr)
+      call setline(1, split(jstr, "\n"))
     else
       call append(line('$'), '--------')
-      call append(line('$'), jstr)
+      call append(line('$'), split(jstr, "\n"))
     endif
     normal! Gzt
   endif
