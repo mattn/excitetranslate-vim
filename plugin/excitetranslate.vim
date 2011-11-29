@@ -4,34 +4,13 @@
 "
 " Maintainer:	MURAOKA Taro <koron@tka.att.ne.jp>
 " Author:	Yasuhiro Matsumoto <mattn_jp@hotmail.com>
-" Last Change:	16-Sep-2011.
+" Last Change:	29-Nov-2011.
 
 if !exists('g:excitetranslate_options')
   let g:excitetranslate_options = ["register","buffer"]
 endif
 
 let s:endpoint = 'http://www.excite.co.jp/world/english/'
-
-function! s:nr2byte(nr)
-  if a:nr < 0x80
-    return nr2char(a:nr)
-  elseif a:nr < 0x800
-    return nr2char(a:nr/64+192).nr2char(a:nr%64+128)
-  else
-    return nr2char(a:nr/4096%16+224).nr2char(a:nr/64%64+128).nr2char(a:nr%64+128)
-  endif
-endfunction
-
-function! s:nr2enc_char(charcode)
-  if &encoding == 'utf-8'
-    return nr2char(a:charcode)
-  endif
-  let char = s:nr2byte(a:charcode)
-  if strlen(char) > 1
-    let char = strtrans(iconv(char, 'utf-8', &encoding))
-  endif
-  return char
-endfunction
 
 function! s:CheckEorJ(word)
   let all = strlen(a:word)
@@ -43,20 +22,9 @@ function! ExciteTranslate(word, ...)
   let mode = a:0 >= 2 ? a:2 : s:CheckEorJ(a:word)
   let @a= mode
   let res = http#post(s:endpoint, {"before": a:word, "wb_lp": mode})
-  let text = iconv(res.content, "utf-8", &encoding)
-  let mx = '^.*<textarea id="after"[^>]\+>'
-  let text = substitute(text, mx, '', '')
-  let mx = '</textarea>.*$'
-  let text = substitute(text, mx, '', '')
-  let text = substitute(text, '&gt;', '>', 'g')
-  let text = substitute(text, '&lt;', '<', 'g')
-  let text = substitute(text, '&quot;', '"', 'g')
-  let text = substitute(text, '&apos;', "'", 'g')
-  let text = substitute(text, '&nbsp;', ' ', 'g')
-  let text = substitute(text, '&yen;', '\&#65509;', 'g')
-  let text = substitute(text, '&#\(\d\+\);', '\=s:nr2enc_char(submatch(1))', 'g')
-  let text = substitute(text, '&amp;', '\&', 'g')
-  return text
+  let dom = html#parse(iconv(res.content, "utf-8", &encoding))
+  let after = dom.find('textarea', {"id": "after"})
+  return substitute(after.value(), "\x08", '', '')
 endfunction
 
 function! ExciteTranslateRange() range
