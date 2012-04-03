@@ -4,7 +4,7 @@
 "
 " Maintainer:	MURAOKA Taro <koron@tka.att.ne.jp>
 " Author:	Yasuhiro Matsumoto <mattn_jp@hotmail.com>
-" Last Change:	29-Nov-2011.
+" Last Change:	03-Apr-2012.
 
 if !exists('g:excitetranslate_options')
   let g:excitetranslate_options = ["register","buffer"]
@@ -21,8 +21,8 @@ endfunction
 function! ExciteTranslate(word, ...)
   let mode = a:0 >= 2 ? a:2 : s:CheckEorJ(a:word)
   let @a= mode
-  let res = http#post(s:endpoint, {"before": a:word, "wb_lp": mode})
-  let dom = html#parse(iconv(res.content, "utf-8", &encoding))
+  let res = webapi#http#post(s:endpoint, {"before": a:word, "wb_lp": mode})
+  let dom = webapi#html#parse(iconv(res.content, "utf-8", &encoding))
   let after = dom.find('textarea', {"id": "after"})
   return substitute(after.value(), "\x08", "\n", 'g')
 endfunction
