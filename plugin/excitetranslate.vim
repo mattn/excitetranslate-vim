@@ -13,3 +13,10 @@ endif
 let s:endpoint = 'https://www.excite.co.jp/world/english_japanese/'
 
 command! -nargs=0 -range ExciteTranslate <line1>,<line2>call excitetranslate#range()
+
+nnoremap <plug>(excitetranslate) :<C-u>call excitetranslate#replace('n')<cr>
+xnoremap <plug>(excitetranslate) :<C-u>call excitetranslate#replace('v')<cr>
+if !hasmapto('<plug>(excitetranslate)')
+  nmap ,E <plug>(excitetranslate)
+  xmap ,E <plug>(excitetranslate)
+endif

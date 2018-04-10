@@ -57,3 +57,22 @@ function! excitetranslate#range() range
     let @" = jstr
   endif
 endfunction
+
+function! excitetranslate#replace(mode) range abort
+  if a:mode ==# 'v'
+    let l:save_regcont = @"
+    let l:save_regtype = getregtype('"')
+    silent! normal! gvygv
+    let l:text = substitute(@", '\n\+', ' ', 'g')
+    call setreg('"', l:save_regcont, l:save_regtype)
+  else
+    let l:text = expand('<cword>')
+  endif
+  let l:r = substitute(system('excitetranslate', l:text), '[\r\n]', '', 'g')
+  if a:mode ==# 'n'
+    silent! exe 'normal!' 'ciw' . l:r
+  else
+    silent! exe 'normal!' 'c' . l:r
+  endif
+  "call repeat#set('\<plug>(excitetranslate)', v:count)
+endfunction
