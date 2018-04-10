@@ -10,7 +10,7 @@ if !exists('g:excitetranslate_options')
   let g:excitetranslate_options = ["register","buffer"]
 endif
 
-let s:endpoint = 'http://www.excite.co.jp/world/english/'
+let s:endpoint = 'https://www.excite.co.jp/world/english_japanese/'
 
 function! s:CheckEorJ(word)
   let all = strlen(a:word)
